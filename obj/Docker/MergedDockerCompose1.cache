@@ -1,0 +1,91 @@
+name: dockercompose16298217031131432967
+services:
+  minimalapibackgroundworker:
+    build:
+      context: C:\Users\swamp\RiderProjects\MinimalApiBackgroundWorker
+      dockerfile: Dockerfile
+      labels:
+        com.microsoft.created-by: visual-studio
+        com.microsoft.visual-studio.project-name: MinimalApiBackgroundWorker
+      target: base
+    container_name: MinimalApiBackgroundWorker
+    depends_on:
+      redis:
+        condition: service_started
+    entrypoint:
+    - tail
+    - -f
+    - /dev/null
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS: "true"
+      ASPNETCORE_URLS: https://+:443;http://+:80
+      DOTNET_USE_POLLING_FILE_WATCHER: "1"
+      NUGET_FALLBACK_PACKAGES: ""
+    image: minimalapibackgroundworker:dev
+    labels:
+      com.microsoft.visualstudio.debuggee.arguments: ' --additionalProbingPath /root/.nuget/packages  ""'
+      com.microsoft.visualstudio.debuggee.killprogram: /bin/sh -c "if PID=$$(pidof
+        dotnet); then kill $$PID; fi"
+      com.microsoft.visualstudio.debuggee.program: dotnet
+      com.microsoft.visualstudio.debuggee.workingdirectory: /app
+    networks:
+      default: null
+    ports:
+    - mode: ingress
+      target: 80
+      published: "5002"
+      protocol: tcp
+    - mode: ingress
+      target: 443
+      published: "5001"
+      protocol: tcp
+    tty: true
+    volumes:
+    - type: bind
+      source: C:\Users\swamp\RiderProjects\MinimalApiBackgroundWorker
+      target: /app
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\swamp\vsdbg\vs2017u5
+      target: /remote_debugger
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\swamp\AppData\Roaming/ASP.NET/Https
+      target: /root/.aspnet/https
+      read_only: true
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\swamp\AppData\Roaming/Microsoft/UserSecrets
+      target: /root/.microsoft/usersecrets
+      read_only: true
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\swamp\.nuget\packages\
+      target: /root/.nuget/packages
+      read_only: true
+      bind:
+        create_host_path: true
+    - type: bind
+      source: C:\Users\swamp\RiderProjects\MinimalApiBackgroundWorker
+      target: /src
+      bind:
+        create_host_path: true
+  redis:
+    environment:
+      REDIS_PASSWORD: "123456"
+    image: redis
+    networks:
+      default: null
+    ports:
+    - mode: ingress
+      target: 6379
+      published: "6379"
+      protocol: tcp
+networks:
+  default:
+    name: dockercompose16298217031131432967_default

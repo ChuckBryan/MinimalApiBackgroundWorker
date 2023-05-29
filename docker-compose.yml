@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  minimalapibackgroundworker:
+    image: ${DOCKER_REGISTRY-}minimalapibackgroundworker
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+       - redis
+
+  redis:
+    image: redis
+    environment:
+      - REDIS_PASSWORD=123456
+    ports:
+      - "6379:6379"
+
